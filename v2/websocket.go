@@ -54,10 +54,11 @@ var wsServe = func(cfg *WsConfig, handler WsHandler, errHandler ErrHandler) (don
 		// websocket.Conn.ReadMessage or when the stopC channel is
 		// closed by the client.
 		defer close(doneC)
-
-		// This function overwrites the default ping frame handler
-		// sent by ther server
-		keepAlive(c)
+		if WebsocketKeepalive {
+			// This function overwrites the default ping frame handler
+			// sent by their server
+			keepAlive(c)
+		}
 
 		// Wait for the stopC channel to be closed.  We do that in a
 		// separate goroutine because ReadMessage is a blocking
@@ -86,9 +87,9 @@ var wsServe = func(cfg *WsConfig, handler WsHandler, errHandler ErrHandler) (don
 }
 
 func keepAlive(c *websocket.Conn) {
-	// Set handler to reply to server Pings with Pongs containing the same payload
+	// Set handler to reply to server PING frames with PONG frames, containing the same payload
 	c.SetPingHandler(func(pingData string) error {
-		// Respond with Pong using the server's Ping payload
+		// Respond with Pong using the server's PING payload
 		err := c.WriteControl(
 			websocket.PongMessage,
 			[]byte(pingData),
@@ -96,6 +97,7 @@ func keepAlive(c *websocket.Conn) {
 		)
 		if err != nil {
 			c.Close()
+			return err
 		}
 		return nil
 	})
