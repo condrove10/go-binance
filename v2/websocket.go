@@ -53,10 +53,11 @@ var wsServe = func(cfg *WsConfig, handler WsHandler, errHandler ErrHandler) (don
 		// This function will exit either on error from
 		// websocket.Conn.ReadMessage or when the stopC channel is
 		// closed by the client.
+
 		defer close(doneC)
 		if WebsocketKeepalive {
 			// This function overwrites the default ping frame handler
-			// sent by their server
+			// sent by the websocket API server
 			keepAlive(c, WebsocketTimeout)
 		}
 
@@ -90,7 +91,7 @@ func keepAlive(c *websocket.Conn, timeout time.Duration) {
 	ticker := time.NewTicker(timeout)
 
 	lastResponse := time.Now()
-	// Set handler to reply to server PING frames with PONG frames, containing the same payload
+
 	c.SetPingHandler(func(pingData string) error {
 		// Respond with Pong using the server's PING payload
 		err := c.WriteControl(
@@ -99,20 +100,17 @@ func keepAlive(c *websocket.Conn, timeout time.Duration) {
 			time.Now().Add(time.Second*10), // Short deadline to ensure timely response
 		)
 		if err != nil {
-			c.Close()
 			return err
 		}
+
+		lastResponse = time.Now()
+
 		return nil
 	})
 
 	go func() {
 		defer ticker.Stop()
 		for {
-			deadline := time.Now().Add(30 * time.Second)
-			err := c.WriteControl(websocket.PingMessage, []byte{}, deadline)
-			if err != nil {
-				return
-			}
 			<-ticker.C
 			if time.Since(lastResponse) > timeout {
 				c.Close()
