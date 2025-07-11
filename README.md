@@ -63,6 +63,7 @@ import (
 ### Documentation
 
 [![GoDoc](https://godoc.org/github.com/adshao/go-binance?status.svg)](https://godoc.org/github.com/adshao/go-binance)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcondrove10%2Fgo-binance.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcondrove10%2Fgo-binance?ref=badge_shield)
 
 ### REST API
 
@@ -497,3 +498,7 @@ func main() {
 
 
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcondrove10%2Fgo-binance.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcondrove10%2Fgo-binance?ref=badge_large)
